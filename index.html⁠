@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandera Partners Group - Admin</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #d97706;
+            --accent-hover: #b45309;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --danger: #ef4444;
+            --border: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 8px;
+            color: var(--accent);
+        }
+
+        .section {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        button.btn-primary {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button.btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-inaugural {
+            background-color: rgba(217, 119, 6, 0.2);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .action-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 16px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>MANDERA PARTNERS GROUP</h1>
+        <span style="color: var(--text-sub); font-size: 0.9rem;">Dashboard</span>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">Aktive Medlemmer</div>
+            <div class="value" id="memberCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Inaugural Medlemmer (20% Rabatt)</div>
+            <div class="value" id="inauguralCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Est. Månedlig Inntekt (Min 200 kr)</div>
+            <div class="value" id="revenueEstimate">0 NOK</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">Medlemsoversikt</h2>
+            <button class="btn-primary" onclick="openAddModal()">+ Legg til Medlem</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Navn</th>
+                    <th>Selskap / Rolle</th>
+                    <th>Status</th>
+                    <th>Mnd. Avgift</th>
+                    <th>Handlinger</th>
+                </tr>
+            </thead>
+            <tbody id="memberTableBody">
+                <!-- Dynamisk innhold -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal: Legg til medlem -->
+<div class="modal" id="addModal">
+    <div class="modal-content">
+        <h3 style="margin-top: 0;">Legg til nytt medlem</h3>
+        <label>Navn</label>
+        <input type="text" id="addName" placeholder="Ola Nordmann">
+        <label>Selskap / Tittel</label>
+        <input type="text" id="addRole" placeholder="Daglig Leder / Partner">
+        <label>
+            <input type="checkbox" id="addInaugural" checked style="width: auto;"> Inaugural Group (20% rabatt)
+        </label>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal('addModal')">Avbryt</button>
+            <button class="btn-primary" onclick="addMember()">Lagre</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Bekreft Sletting -->
+<div class="modal" id="deleteModal">
+    <div class="modal-content">
+        <h3 style="margin-top: 0; color: var(--danger);">Bekreft sletting</h3>
+        <p style="color: var(--text-sub);">Er du sikker på at du vil fjerne dette medlemmet fra Mandera Partners Group?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal('deleteModal')">Avbryt</button>
+            <button class="btn-danger" onclick="confirmDelete()">Slett</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const BASE_FEE = 200;
+    let members = JSON.parse(localStorage.getItem('mandera_members')) || [
+        { id: 1, name: "Eksempel Medlem", role: "Gründer", inaugural: true }
+    ];
+    let memberToDelete = null;
+
+    function saveAndRender() {
+        localStorage.setItem('mandera_members', JSON.stringify(members));
+        render();
+    }
+
+    function render() {
+        const tbody = document.getElementById('memberTableBody');
+        tbody.innerHTML = '';
+
+        let inauguralCount = 0;
+        let totalRevenue = 0;
+
+        members.forEach(m => {
+            if (m.inaugural) inauguralCount++;
+            const fee = m.inaugural ? BASE_FEE * 0.8 : BASE_FEE;
+            totalRevenue += fee;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${m.name}</strong></td>
+                <td style="color: var(--text-sub);">${m.role}</td>
+                <td>${m.inaugural ? '<span class="badge badge-inaugural">Inaugural (20%)</span>' : '<span class="badge">Ordinær</span>'}</td>
+                <td>${fee} NOK</td>
+                <td>
+                    <button class="action-btn" onclick="openDeleteModal(${m.id})">Slett</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('memberCount').innerText = members.length;
+        document.getElementById('inauguralCount').innerText = inauguralCount;
+        document.getElementById('revenueEstimate').innerText = `${totalRevenue} NOK`;
+    }
+
+    function openAddModal() {
+        document.getElementById('addModal').style.display = 'flex';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    function addMember() {
+        const name = document.getElementById('addName').value;
+        const role = document.getElementById('addRole').value;
+        const inaugural = document.getElementById('addInaugural').checked;
+
+        if (!name) return;
+
+        members.push({
+            id: Date.now(),
+            name,
+            role: role || 'Medlem',
+            inaugural
+        });
+
+        document.getElementById('addName').value = '';
+        document.getElementById('addRole').value = '';
+        closeModal('addModal');
+        saveAndRender();
+    }
+
+    function openDeleteModal(id) {
+        memberToDelete = id;
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function confirmDelete() {
+        if (memberToDelete !== null) {
+            members = members.filter(m => m.id !== memberToDelete);
+            memberToDelete = null;
+            closeModal('deleteModal');
+            saveAndRender();
+        }
+    }
+
+    // Initial render
+    render();
+</script>
+
+</body>
+</html>
